@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ThemeButtonGroup from './components/ThemeButtonGroup.tsx';
 import UserProfile from './components/UserProfile.tsx';
 import IntroEditor from './components/IntroEditor.tsx';
@@ -25,27 +25,16 @@ function App() {
   // 2. 主题色状态
   const [themeColor, setThemeColor] = useState<ThemeColor>('blue');
 
-  const [inputIntro, setInputIntro] = useState('');
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputIntro(e.target.value);
-  };
-  const customUpdateIntro = () => {
-    if (inputIntro) {
-      setUserInfo({ ...userInfo, intro: inputIntro });
-      setInputIntro(''); // 清空输入框
-    }
-  };
   // Step 4：定义交互函数
   // 切换主题色
   const changeTheme = (color: ThemeColor) => {
     setThemeColor(color);
   };
   // 修改简介
-  const updateIntro = () => {
+  const updateIntro = (newIntro: string) => {
     setUserInfo({
       ...userInfo, // 保留原有信息
-      intro: '我学会 React 状态管理啦！',
+      intro: newIntro,
     });
   };
 
@@ -68,16 +57,6 @@ function App() {
         {/* 主题色切换按钮组 */}
         <ThemeButtonGroup onChangeTheme={changeTheme} />
         <IntroEditor onChange={updateIntro} />
-
-        {/* 修改简介按钮 */}
-        <div className="flex justify-center">
-          <button
-            onClick={updateIntro}
-            className="px-6 py-2 rounded bg-white text-blue-500 font-medium hover:bg-gray-100 transition"
-          >
-            修改简介
-          </button>
-        </div>
       </div>
     </div>
   );

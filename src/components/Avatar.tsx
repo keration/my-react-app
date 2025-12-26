@@ -1,6 +1,4 @@
 // src/components/Avatar.tsx
-import React from 'react';
-
 interface AvatarProps {
   src: string;
   alt: string;
