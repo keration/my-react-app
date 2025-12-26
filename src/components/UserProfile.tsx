@@ -1,4 +1,4 @@
-import React from 'react';
+import type { FC } from 'react';
 import Avatar from './Avatar';
 
 interface UserProfileProps {
@@ -6,7 +6,7 @@ interface UserProfileProps {
   avatar: string;
   intro: string;
 }
-const UserProfile: React.FC<UserProfileProps> = ({ name, avatar, intro }) => {
+const UserProfile: FC<UserProfileProps> = ({ name, avatar, intro }) => {
   return (
     <div className="max-w-sm w-full bg-white rounded-lg shadow-md p-6 flex flex-col items-center">
       <Avatar src={avatar} alt="用户头像" />

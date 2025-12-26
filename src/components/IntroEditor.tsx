@@ -1,9 +1,9 @@
-import { useState, type ChangeEvent } from 'react';
+import { useState, type ChangeEvent, type FC } from 'react';
 
 interface IntroEditorProps {
   onChange: (newIntro: string) => void;
 }
-const IntroEditor: React.FC<IntroEditorProps> = ({ onChange }) => {
+const IntroEditor: FC<IntroEditorProps> = ({ onChange }) => {
   const [inputValue, setInputValue] = useState('');
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);

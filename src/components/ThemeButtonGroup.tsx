@@ -1,6 +1,6 @@
-import React from 'react';
+import type { FC } from 'react';
 
-const ThemeButtonGroup: React.FC<{
+const ThemeButtonGroup: FC<{
   onChangeTheme: (color: 'blue' | 'green' | 'purple') => void;
 }> = ({ onChangeTheme }) => {
   const themes: ('blue' | 'green' | 'purple')[] = ['blue', 'green', 'purple'];
