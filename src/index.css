@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 彩色流动边框动画（外层容器承载渐变，内层为内容背景） */
+.animated-border {
+  padding: 4px; /* 边框厚度 */
+  border-radius: 0.75rem; /* 与 rounded-lg 匹配 */
+  background: linear-gradient(90deg, #ff0047, #ff8a00, #00d18b, #0066ff, #a200ff, #ff0047);
+  background-size: 300% 300%;
+  animation: gradient-move 3s linear infinite;
+}
+
+@keyframes gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

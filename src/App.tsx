@@ -48,15 +48,15 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      {/* 信息卡片 */}
-      <div
-        className={`w-full max-w-md rounded-lg shadow-lg p-6 text-white ${colorClassMap[themeColor]}`}
-      >
-        <UserProfile name={userInfo.name} avatar={userInfo.avatar} intro={userInfo.intro} />
+      {/* 信息卡片：外层显示动画边框，内层显示主题背景 */}
+      <div className="w-full max-w-md rounded-lg animated-border shadow-lg">
+        <div className={`rounded-lg p-6 text-white ${colorClassMap[themeColor]}`}>
+          <UserProfile name={userInfo.name} avatar={userInfo.avatar} intro={userInfo.intro} />
 
-        {/* 主题色切换按钮组 */}
-        <ThemeButtonGroup onChangeTheme={changeTheme} />
-        <IntroEditor onChange={updateIntro} />
+          {/* 主题色切换按钮组 */}
+          <ThemeButtonGroup onChangeTheme={changeTheme} />
+          <IntroEditor onChange={updateIntro} />
+        </div>
       </div>
     </div>
   );
