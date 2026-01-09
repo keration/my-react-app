@@ -4,7 +4,7 @@
 
 /* 彩色流动边框动画（外层容器承载渐变，内层为内容背景） */
 .animated-border {
-  padding: 3px; /* 边框厚度 */
+  padding: 6px; /* 边框厚度 */
   border-radius: 0.75rem; /* 与 rounded-lg 匹配 */
   background: linear-gradient(90deg, #ff0047, #ff8a00, #00d18b, #0066ff, #a200ff, #ff0047);
   background-size: 300% 300%;
@@ -21,4 +21,55 @@
   100% {
     background-position: 0% 50%;
   }
+}
+
+/* 新增：卡片悬浮发光动画 */
+.card-hover-glow {
+  transition: all 0.3s ease;
+}
+.card-hover-glow:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 0 25px rgba(255, 255, 255, 0.2),
+    0 0 40px currentColor;
+}
+
+/* 新增：呼吸动画 */
+@keyframes neon-breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px currentColor,
+      0 0 20px currentColor;
+  }
+  50% {
+    box-shadow:
+      0 0 20px currentColor,
+      0 0 40px currentColor;
+  }
+}
+
+/* 按钮呼吸类 */
+.btn-neon {
+  animation: neon-breathe 2s ease-in-out infinite;
+  transition: all 0.2s ease;
+}
+.btn-neon:hover {
+  animation-duration: 1s;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-fade-in {
+  animation: fade-in-up 0.5s ease forwards;
+  opacity: 0;
 }

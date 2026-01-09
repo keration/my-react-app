@@ -2,6 +2,16 @@ import { useState } from 'react';
 
 export type ThemeColor = 'blue' | 'green' | 'purple';
 
+// 把 getThemeGlowColor 提到文件顶层（核心修复）
+export const getThemeGlowColor = (color: ThemeColor) => {
+  const glowMap = {
+    blue: '#3b82f6',
+    green: '#22c55e',
+    purple: '#a855f7',
+  };
+  return glowMap[color];
+};
+
 export const useTheme = (initialTheme: ThemeColor = 'blue') => {
   const [themeColor, setThemeColor] = useState<ThemeColor>(initialTheme);
   const changeTheme = (color: ThemeColor) => {
