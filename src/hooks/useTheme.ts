@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 export type ThemeColor = 'blue' | 'green' | 'purple';
 
-// 把 getThemeGlowColor 提到文件顶层（核心修复）
 export const getThemeGlowColor = (color: ThemeColor) => {
   const glowMap = {
     blue: '#3b82f6',
@@ -18,22 +17,25 @@ export const useTheme = (initialTheme: ThemeColor = 'blue') => {
     setThemeColor(color);
   };
 
-  // 简化配置：单层卡片样式，无嵌套
+  // 简化：仅保留主题色半透背景，无需底层遮挡（边框已用 CSS 隔离）
   const colorClassMap = {
     blue: {
-      card: 'bg-gray-900/95 bg-blue-900/60 backdrop-blur-sm border border-blue-500/30',
+      card: 'bg-blue-900/60 backdrop-blur-sm border border-blue-500/30',
       button:
         'bg-blue-800/80 hover:bg-blue-700/90 border border-blue-400/50 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40',
+      borderContainer: 'text-blue-500',
     },
     green: {
-      card: 'bg-gray-900/95 bg-green-900/60 backdrop-blur-sm border border-green-500/30',
+      card: 'bg-green-900/60 backdrop-blur-sm border border-green-500/30',
       button:
         'bg-green-800/80 hover:bg-green-700/90 border border-green-400/50 shadow-lg shadow-green-500/20 hover:shadow-green-500/40',
+      borderContainer: 'text-green-500',
     },
     purple: {
-      card: 'bg-gray-900/95 bg-purple-900/60 backdrop-blur-sm border border-purple-500/30',
+      card: 'bg-purple-900/60 backdrop-blur-sm border border-purple-500/30',
       button:
         'bg-purple-800/80 hover:bg-purple-700/90 border border-purple-400/50 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40',
+      borderContainer: 'text-purple-500',
     },
   };
 
