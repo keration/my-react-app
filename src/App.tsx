@@ -2,8 +2,9 @@ import ThemeButtonGroup from './components/ThemeButtonGroup.tsx';
 import UserProfile from './components/UserProfile.tsx';
 import IntroEditor from './components/IntroEditor.tsx';
 import StarBackground from './components/StarBackground.tsx';
-import { useTheme, getThemeGlowColor } from './hooks/useTheme.ts';
+import { useTheme, getThemeGlowColor, ThemeColor } from './hooks/useTheme.ts';
 import { useUserList } from './hooks/useUserList.ts';
+import { useEffect } from 'react';
 
 function App() {
   const { themeColor, changeTheme, colorClassMap } = useTheme('blue');
@@ -22,6 +23,24 @@ function App() {
       intro: '我在学 TypeScript 类型约束 ✨',
     },
   ]);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('themeColor') as ThemeColor;
+    if (savedTheme) {
+      changeTheme(savedTheme);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('themeColor', themeColor);
+  }, [themeColor]);
+
+  useEffect(() => {
+    console.log(`当前用户列表：, ${userList.length}`);
+    return () => {
+      console.log('用户列表组件卸载');
+    };
+  }, [userList]);
 
   return (
     <div className="min-h-screen p-4 relative overflow-hidden">
