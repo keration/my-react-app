@@ -1,13 +1,24 @@
+import { useState, useEffect, useCallback } from 'react';
+import {
+  CONFETTI_CONFIG,
+  startContinuousConfetti,
+  stopContinuousConfetti,
+} from './utils/confettiUtils.ts';
 import ThemeButtonGroup from './components/ThemeButtonGroup.tsx';
 import UserProfile from './components/UserProfile.tsx';
 import IntroEditor from './components/IntroEditor.tsx';
 import StarBackground from './components/StarBackground.tsx';
+import CyberGridBackground from './components/CyberGridBackground.tsx';
+import ParticleWaveBackground from './components/ParticleWaveBackground.tsx';
+import BackgroundSelector, { BackgroundType } from './components/BackgroundSelector.tsx';
 import { useTheme, getThemeGlowColor, ThemeColor } from './hooks/useTheme.ts';
 import { useUserList } from './hooks/useUserList.ts';
-import { useEffect } from 'react';
 
 function App() {
   const { themeColor, changeTheme, colorClassMap } = useTheme('blue');
+  const [currentBackground, setCurrentBackground] = useState<BackgroundType>('star');
+  // 仅保留防抖状态
+  const [canFireConfetti, setCanFireConfetti] = useState(true);
 
   const { userList, addNewUser, deleteUser, updateUserIntro } = useUserList([
     {
@@ -24,11 +35,28 @@ function App() {
     },
   ]);
 
+  // 🌟 修改2：修改触发逻辑，改为持续喷射 + 防抖结束后停止
+  const triggerConfetti = useCallback(() => {
+    if (!canFireConfetti) return;
+    setCanFireConfetti(false);
+
+    // 启动持续喷射（使用默认200ms间隔，也可自定义：startContinuousConfetti(300)）
+    startContinuousConfetti();
+
+    // 防抖时间结束后：恢复可触发状态 + 停止持续喷射
+    setTimeout(() => {
+      setCanFireConfetti(true);
+      stopContinuousConfetti(); // 停止礼花喷射
+    }, CONFETTI_CONFIG.debounceTime);
+  }, [canFireConfetti]);
+
+  // 原有生命周期逻辑（无修改）
   useEffect(() => {
     const savedTheme = localStorage.getItem('themeColor') as ThemeColor;
-    if (savedTheme) {
-      changeTheme(savedTheme);
-    }
+    if (savedTheme) changeTheme(savedTheme);
+
+    const savedBackground = localStorage.getItem('backgroundType') as BackgroundType;
+    if (savedBackground) setCurrentBackground(savedBackground);
   }, []);
 
   useEffect(() => {
@@ -36,19 +64,56 @@ function App() {
   }, [themeColor]);
 
   useEffect(() => {
+    localStorage.setItem('backgroundType', currentBackground);
+  }, [currentBackground]);
+
+  useEffect(() => {
     console.log(`当前用户列表：, ${userList.length}`);
-    return () => {
-      console.log('用户列表组件卸载');
-    };
+    return () => console.log('用户列表组件卸载');
   }, [userList]);
+
+  // 🌟 修改3：组件卸载时停止礼花（避免内存泄漏）
+  useEffect(() => {
+    return () => {
+      stopContinuousConfetti();
+    };
+  }, []);
+
+  const renderBackground = () => {
+    switch (currentBackground) {
+      case 'cyber':
+        return <CyberGridBackground />;
+      case 'particle':
+        return <ParticleWaveBackground />;
+      default:
+        return <StarBackground />;
+    }
+  };
+
+  // 添加用户逻辑（无修改，仅调用修改后的triggerConfetti）
+  const handleAddNewUser = () => {
+    addNewUser({
+      id: Date.now() + Math.random(),
+      name: `新用户${Date.now().toString().slice(-4)}`,
+      avatar: `https://picsum.photos/${200 + userList.length}/${200 + userList.length}`,
+      intro: '我是新增的用户 🆕',
+    });
+    triggerConfetti();
+  };
 
   return (
     <div className="min-h-screen p-4 relative overflow-hidden">
-      <StarBackground />
+      {renderBackground()}
+
+      <BackgroundSelector
+        currentBackground={currentBackground}
+        onChangeBackground={setCurrentBackground}
+        themeColor={themeColor}
+      />
+
       <div className="max-w-2xl mx-auto relative z-10">
         {userList.map((user) => (
           <div key={user.id} className="mb-6 card-fade-in">
-            {/* 核心修改：移除 1px padding，改用 CSS 原生渐变边框 */}
             <div
               className={`w-full rounded-lg animated-border shadow-lg card-hover-glow ${colorClassMap[themeColor].borderContainer}`}
             >
@@ -70,14 +135,7 @@ function App() {
         <ThemeButtonGroup onChangeTheme={changeTheme} />
 
         <button
-          onClick={() =>
-            addNewUser({
-              id: Date.now() + Math.random(),
-              name: `新用户${Date.now().toString().slice(-4)}`,
-              avatar: `https://picsum.photos/${200 + userList.length}/${200 + userList.length}`,
-              intro: '我是新增的用户 🆕',
-            })
-          }
+          onClick={handleAddNewUser}
           className={`mt-4 px-4 py-2 rounded text-white ${colorClassMap[themeColor].button} transition btn-neon`}
           style={{ color: getThemeGlowColor(themeColor) }}
         >
