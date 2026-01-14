@@ -14,11 +14,19 @@ import BackgroundSelector, { BackgroundType } from './components/BackgroundSelec
 import { useTheme, getThemeGlowColor, ThemeColor } from './hooks/useTheme.ts';
 import { useUserList } from './hooks/useUserList.ts';
 
+const setThemeVariables = (themeColor: ThemeColor) => {
+  const glowColor = getThemeGlowColor(themeColor);
+  document.documentElement.style.setProperty('--theme-glow', glowColor);
+};
+
 function App() {
   const { themeColor, changeTheme, colorClassMap } = useTheme('blue');
   const [currentBackground, setCurrentBackground] = useState<BackgroundType>('star');
-  // 仅保留防抖状态
   const [canFireConfetti, setCanFireConfetti] = useState(true);
+
+  useEffect(() => {
+    setThemeVariables(themeColor);
+  }, [themeColor]);
 
   const { userList, addNewUser, deleteUser, updateUserIntro } = useUserList([
     {
@@ -35,22 +43,18 @@ function App() {
     },
   ]);
 
-  // 🌟 修改2：修改触发逻辑，改为持续喷射 + 防抖结束后停止
+  // 彩带动画触发逻辑
   const triggerConfetti = useCallback(() => {
     if (!canFireConfetti) return;
     setCanFireConfetti(false);
-
-    // 启动持续喷射（使用默认200ms间隔，也可自定义：startContinuousConfetti(300)）
     startContinuousConfetti();
-
-    // 防抖时间结束后：恢复可触发状态 + 停止持续喷射
     setTimeout(() => {
       setCanFireConfetti(true);
-      stopContinuousConfetti(); // 停止礼花喷射
+      stopContinuousConfetti();
     }, CONFETTI_CONFIG.debounceTime);
   }, [canFireConfetti]);
 
-  // 原有生命周期逻辑（无修改）
+  // 本地存储恢复主题/背景
   useEffect(() => {
     const savedTheme = localStorage.getItem('themeColor') as ThemeColor;
     if (savedTheme) changeTheme(savedTheme);
@@ -59,6 +63,7 @@ function App() {
     if (savedBackground) setCurrentBackground(savedBackground);
   }, []);
 
+  // 主题/背景变更时持久化
   useEffect(() => {
     localStorage.setItem('themeColor', themeColor);
   }, [themeColor]);
@@ -67,18 +72,20 @@ function App() {
     localStorage.setItem('backgroundType', currentBackground);
   }, [currentBackground]);
 
+  // 用户列表日志
   useEffect(() => {
     console.log(`当前用户列表：, ${userList.length}`);
     return () => console.log('用户列表组件卸载');
   }, [userList]);
 
-  // 🌟 修改3：组件卸载时停止礼花（避免内存泄漏）
+  // 组件卸载停止彩带动画
   useEffect(() => {
     return () => {
       stopContinuousConfetti();
     };
   }, []);
 
+  // 背景渲染逻辑
   const renderBackground = () => {
     switch (currentBackground) {
       case 'cyber':
@@ -90,7 +97,7 @@ function App() {
     }
   };
 
-  // 添加用户逻辑（无修改，仅调用修改后的triggerConfetti）
+  // 添加新用户逻辑
   const handleAddNewUser = () => {
     addNewUser({
       id: Date.now() + Math.random(),
@@ -102,45 +109,52 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen p-4 relative overflow-hidden">
+    <div className="min-h-screen p-4 relative overflow-hidden block">
+      {/* 动态背景 */}
       {renderBackground()}
 
+      {/* 背景选择器 */}
       <BackgroundSelector
         currentBackground={currentBackground}
         onChangeBackground={setCurrentBackground}
         themeColor={themeColor}
       />
 
-      <div className="max-w-2xl mx-auto relative z-10">
+      {/* 核心内容容器 */}
+      <div className="w-96 mx-auto relative z-10 block">
+        {/* 用户列表渲染 */}
         {userList.map((user) => (
-          <div key={user.id} className="mb-6 card-fade-in">
+          <div key={user.id} className="mb-6 card-fade-in block">
             <div
-              className={`w-full rounded-lg animated-border shadow-lg card-hover-glow ${colorClassMap[themeColor].borderContainer}`}
+              className={`w-96 block mx-auto rounded-lg animated-border shadow-lg transition-all duration-300 hover:shadow-[0_0_15px_var(--theme-glow)] ${colorClassMap[themeColor].borderContainer}`}
             >
-              <div className={`rounded-lg p-6 text-white ${colorClassMap[themeColor].card}`}>
+              <div className={colorClassMap[themeColor].card}>
+                {/* 用户信息展示 */}
                 <UserProfile name={user.name} avatar={user.avatar} intro={user.intro} />
                 <button
                   onClick={() => deleteUser(user.name)}
-                  className="mt-2 px-3 py-1 rounded bg-white/20 hover:bg-white/30 btn-neon transition"
-                  style={{ color: getThemeGlowColor(themeColor) }}
+                  className="mt-2 px-3 py-1 rounded transition-all duration-300 text-[var(--theme-glow)] bg-white/20 hover:bg-white/30"
                 >
                   删除该用户
                 </button>
+                {/* 简介编辑组件 */}
                 <IntroEditor onChange={(newIntro) => updateUserIntro(user.name, newIntro)} />
               </div>
             </div>
           </div>
         ))}
 
-        <ThemeButtonGroup onChangeTheme={changeTheme} />
-
-        <button
-          onClick={handleAddNewUser}
-          className={`mt-4 px-4 py-2 rounded text-white ${colorClassMap[themeColor].button} transition btn-neon`}
-          style={{ color: getThemeGlowColor(themeColor) }}
-        >
-          添加新用户
-        </button>
+        {/* 按钮组容器 */}
+        <div className="w-96 block mx-auto">
+          {/* 主题切换按钮组 */}
+          <ThemeButtonGroup onChangeTheme={changeTheme} />
+          <button
+            onClick={handleAddNewUser}
+            className={`w-full cursor-pointer transition-all duration-300 text-[var(--theme-glow)] ${colorClassMap[themeColor].button} hover:${colorClassMap[themeColor].buttonHover}`}
+          >
+            添加新用户
+          </button>
+        </div>
       </div>
     </div>
   );
