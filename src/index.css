@@ -3,14 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 1. 全局基础样式（替代 @apply m-0 p-0 box-border） */
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* 2. 渐变边框（保留你的核心视觉效果） */
 .animated-border {
   border-radius: 0.75rem;
   border: 4px solid transparent;
