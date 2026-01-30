@@ -13,6 +13,7 @@ import ParticleWaveBackground from './components/ParticleWaveBackground.tsx';
 import BackgroundSelector, { BackgroundType } from './components/BackgroundSelector.tsx';
 import { useTheme, getThemeGlowColor, ThemeColor } from './hooks/useTheme.ts';
 import { useUserList } from './hooks/useUserList.ts';
+import AddUserForm from './components/AddUserForm.tsx';
 
 const setThemeVariables = (themeColor: ThemeColor) => {
   const glowColor = getThemeGlowColor(themeColor);
@@ -109,7 +110,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen p-4 relative overflow-hidden block">
+    <div className="min-h-screen p-40 relative overflow-hidden block">
       {/* 动态背景 */}
       {renderBackground()}
 
@@ -122,9 +123,10 @@ function App() {
 
       {/* 核心内容容器 */}
       <div className="w-96 mx-auto relative z-10 block">
+        <AddUserForm onSubmit={addNewUser} />
         {/* 用户列表渲染 */}
         {userList.map((user) => (
-          <div key={user.id} className="mb-6 card-fade-in block">
+          <div key={user.id} className="mb-6 card-fade-in block w-50">
             <div
               className={`w-96 block mx-auto rounded-lg animated-border shadow-lg transition-all duration-300 hover:shadow-[0_0_15px_var(--theme-glow)] ${colorClassMap[themeColor].borderContainer}`}
             >
