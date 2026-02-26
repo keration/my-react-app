@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type ThemeColor = 'blue' | 'green' | 'purple';
 
@@ -12,11 +12,23 @@ export const getThemeGlowColor = (color: ThemeColor) => {
 };
 
 export const useTheme = (initialTheme: ThemeColor = 'blue') => {
-  const [themeColor, setThemeColor] = useState<ThemeColor>(initialTheme);
-
+  // 只允许合法 theme
+  const validThemes: ThemeColor[] = ['blue', 'green', 'purple'];
+  const [theme, setTheme] = useState<ThemeColor>(() => {
+    const saved = localStorage.getItem('theme');
+    if (validThemes.includes(saved as ThemeColor)) {
+      return saved as ThemeColor;
+    }
+    return initialTheme;
+  });
   const changeTheme = (color: ThemeColor) => {
-    setThemeColor(color);
+    // setThemeColor(color);
+    setTheme(color);
   };
+
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   const colorClassMap = {
     blue: {
@@ -42,5 +54,5 @@ export const useTheme = (initialTheme: ThemeColor = 'blue') => {
     },
   };
 
-  return { themeColor, changeTheme, colorClassMap };
+  return { theme, changeTheme, colorClassMap };
 };

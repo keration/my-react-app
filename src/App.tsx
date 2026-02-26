@@ -21,13 +21,13 @@ const setThemeVariables = (themeColor: ThemeColor) => {
 };
 
 function App() {
-  const { themeColor, changeTheme, colorClassMap } = useTheme('blue');
+  const { theme, changeTheme, colorClassMap } = useTheme('blue');
   const [currentBackground, setCurrentBackground] = useState<BackgroundType>('star');
   const [canFireConfetti, setCanFireConfetti] = useState(true);
 
   useEffect(() => {
-    setThemeVariables(themeColor);
-  }, [themeColor]);
+    setThemeVariables(theme);
+  }, [theme]);
 
   const { userList, addNewUser, deleteUser, updateUserIntro } = useUserList([
     {
@@ -57,17 +57,18 @@ function App() {
 
   // 本地存储恢复主题/背景
   useEffect(() => {
-    const savedTheme = localStorage.getItem('themeColor') as ThemeColor;
-    if (savedTheme) changeTheme(savedTheme);
+    const savedTheme = localStorage.getItem('theme') as ThemeColor;
+    const validThemes: ThemeColor[] = ['blue', 'green', 'purple'];
+    if (savedTheme && validThemes.includes(savedTheme)) changeTheme(savedTheme);
 
     const savedBackground = localStorage.getItem('backgroundType') as BackgroundType;
     if (savedBackground) setCurrentBackground(savedBackground);
   }, []);
 
-  // 主题/背景变更时持久化
+  // 主题变更时持久化
   useEffect(() => {
-    localStorage.setItem('themeColor', themeColor);
-  }, [themeColor]);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     localStorage.setItem('backgroundType', currentBackground);
@@ -118,7 +119,7 @@ function App() {
       <BackgroundSelector
         currentBackground={currentBackground}
         onChangeBackground={setCurrentBackground}
-        themeColor={themeColor}
+        themeColor={theme}
       />
 
       {/* 核心内容容器 */}
@@ -128,9 +129,9 @@ function App() {
         {userList.map((user) => (
           <div key={user.id} className="mb-6 card-fade-in block w-50">
             <div
-              className={`w-96 block mx-auto rounded-lg animated-border shadow-lg transition-all duration-300 hover:shadow-[0_0_15px_var(--theme-glow)] ${colorClassMap[themeColor].borderContainer}`}
+              className={`w-96 block mx-auto rounded-lg animated-border shadow-lg transition-all duration-300 hover:shadow-[0_0_15px_var(--theme-glow)] ${colorClassMap[theme].borderContainer}`}
             >
-              <div className={colorClassMap[themeColor].card}>
+              <div className={colorClassMap[theme].card}>
                 {/* 用户信息展示 */}
                 <UserProfile name={user.name} avatar={user.avatar} intro={user.intro} />
                 <button
@@ -152,7 +153,7 @@ function App() {
           <ThemeButtonGroup onChangeTheme={changeTheme} />
           <button
             onClick={handleAddNewUser}
-            className={`w-full cursor-pointer transition-all duration-300 text-[var(--theme-glow)] ${colorClassMap[themeColor].button} hover:${colorClassMap[themeColor].buttonHover}`}
+            className={`w-full cursor-pointer transition-all duration-300 text-[var(--theme-glow)] ${colorClassMap[theme].button} hover:${colorClassMap[theme].buttonHover}`}
           >
             添加新用户
           </button>

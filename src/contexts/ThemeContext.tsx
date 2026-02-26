@@ -13,9 +13,11 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // 2. 创建 Provider 组件（包裹需要共享主题的组件）
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const { themeColor, changeTheme } = useTheme('blue'); // 复用原有主题逻辑
+  const { theme, changeTheme } = useTheme('blue'); // 复用原有主题逻辑
   return (
-    <ThemeContext.Provider value={{ themeColor, changeTheme }}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={{ themeColor: theme, changeTheme }}>
+      {children}
+    </ThemeContext.Provider>
   );
 };
 

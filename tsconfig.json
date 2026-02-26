@@ -19,6 +19,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "types": ["vitest/globals", "vitest", "@testing-library/jest-dom", "node"],
 
     /* 类型校验 */
     "strict": true, // 开启严格模式（推荐）
